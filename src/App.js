@@ -31,30 +31,86 @@ function ParkingLayout({ user, userRfid, parkingData, handleLogout, ...props }) 
   const [lastPrice, setLastPrice] = useState(null);
 
   const handleSlotClick = (index) => {
-    if (bookedSlots.includes(index)) return;
+    // Prevent clicking on already booked or occupied slots
+    if (bookedSlots.includes(index) || parkingData[`slot${index + 1}`]?.distance < 20) {
+      return; // Slot is not available for booking
+    }
+  
     setSelectedSlot(index);
     const confirmBooking = window.confirm(`Do you want to book slot ${index}?`);
     if (confirmBooking) {
       setBookedSlots([...bookedSlots, index]);
+      setShowConfetti(true); // Optional: Show confetti for booking confirmation
     }
   };
-
+  
   const getSlotClass = (slot) => {
-    let classes = 'slot';
-    
-    if (slot < 3) {
-      const distance = parkingData[`slot${slot + 1}`]?.distance;
+    let classes = 'slot'; // Default slot class
+  
+    // Define the available slots (1, 3, and 13)
+    const availableSlots = [1, 3, 13];
+  
+    // If the slot is not in the available slots, mark it as booked and not available
+    if (!availableSlots.includes(slot)) {
+      classes += ' booked not-available'; // Red background for unavailable slots
+      return classes; // Return early for slots that cannot be booked
+    }
+  
+    // Check if slot is occupied using sensor data (for slots 1, 3, and 13)
+    const sensorSlotMap = {
+      1: 'slot1',
+      3: 'slot3',
+      13: 'slot13'
+    };
+  
+    let isOccupied = false;
+  
+    // Check sensor data for specific slots
+    if (sensorSlotMap.hasOwnProperty(slot)) {
+      const distance = parkingData[sensorSlotMap[slot]]?.distance;
       if (distance < 20) {
-        classes += ' occupied';
+        isOccupied = true;
+        classes += ' occupied'; // Slot is occupied
       } else {
-        classes += ' free';
+        classes += ' free'; // Slot is free
       }
     }
-    
-    if (bookedSlots.includes(slot)) classes += ' booked';
-    if (slot === selectedSlot) classes += ' selected';
+  
+    // Check if slot is already booked
+    if (bookedSlots.includes(slot)) {
+      classes += ' booked'; // Slot is booked
+      isOccupied = true; // Prevent further booking for this slot
+    }
+  
+    // Mark selected slot
+    if (slot === selectedSlot) {
+      classes += ' selected'; // Slot is selected
+    }
+  
+    // If the slot is occupied or already booked, prevent booking
+    if (isOccupied) {
+      classes += ' not-available'; // Red background for unavailable slots
+    }
+  
     return classes;
   };
+  
+  // const getSlotClass = (slot) => {
+  //   let classes = 'slot';
+    
+  //   if (slot < 3) {
+  //     const distance = parkingData[`slot${slot + 1}`]?.distance;
+  //     if (distance < 20) {
+  //       classes += ' occupied';
+  //     } else {
+  //       classes += ' free';
+  //     }
+  //   }
+    
+  //   if (bookedSlots.includes(slot)) classes += ' booked';
+  //   if (slot === selectedSlot) classes += ' selected';
+  //   return classes;
+  // };
 
   const getRoadClass = (type, position) => {
     let classes = type === 'horizontal' ? 'road-horizontal' : 'road-vertical';
