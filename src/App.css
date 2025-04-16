@@ -1,0 +1,294 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #111;
+  color: #fff;
+}
+
+.parking-container {
+  text-align: center;
+  padding: 10px;
+}
+
+.title {
+  background: blue;
+  color: white;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.parking-layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.slot {
+  width: 50px;
+  height: 50px;
+  background: #ccc;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slot:hover {
+  background: #bbb;
+  transform: scale(1.05);
+}
+
+.slot.booked {
+  background: red;
+  color: white;
+  pointer-events: none;
+}
+
+.slot.selected {
+  border: 3px solid #4CAF50;
+  box-shadow: 0 0 15px #4CAF50;
+  transform: scale(1.1);
+}
+
+.road-vertical {
+  width: 30px;
+  height: 14rem;
+  background: linear-gradient(
+    to bottom,
+    #333 0%,
+    #444 25%,
+    #333 50%,
+    #444 75%,
+    #333 100%
+  );
+  border: 2px dashed #666;
+  border-radius: 10px;
+  margin: 0 5px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.road-vertical.active {
+  position: relative;
+  background: linear-gradient(
+    to bottom,
+    #333 0%,
+    #4CAF50 0%,
+    #4CAF50 40%, /* Adjust this percentage based on slot position */
+    #333 40%,    /* Match the above percentage */
+    #333 100%
+  );
+  border: 2px dashed #666;
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+}
+
+.road-vertical.active::after {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 24px;
+}
+
+.road-vertical.arrow-left::after {
+  content: '←';
+  animation: moveLeft 1s infinite;
+}
+
+.road-vertical.arrow-right::after {
+  content: '→';
+  animation: moveRight 1s infinite;
+}
+
+@keyframes moveLeft {
+  0% { transform: translateX(10px); }
+  50% { transform: translateX(-10px); }
+  100% { transform: translateX(10px); }
+}
+
+@keyframes moveRight {
+  0% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  100% { transform: translateX(-10px); }
+}
+
+.road-horizontal {
+  margin: 10px auto;
+  font-weight: bold;
+  background: gray;
+  padding: 5px 10px;
+  border-radius: 5px;
+  width: 13rem;
+  height: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.road-horizontal.active {
+  background: #4CAF50;
+  box-shadow: 0 0 15px #4CAF50;
+}
+
+.road-horizontal.active::after {
+  content: '→';
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 24px;
+  animation: moveRight 1s infinite;
+}
+
+@keyframes moveDown {
+  0% { transform: translateX(-50%) translateY(-10px); }
+  50% { transform: translateX(-50%) translateY(10px); }
+  100% { transform: translateX(-50%) translateY(-10px); }
+}
+
+@keyframes moveRight {
+  0% { transform: translateY(-50%) translateX(-10px); }
+  50% { transform: translateY(-50%) translateX(10px); }
+  100% { transform: translateY(-50%) translateX(-10px); }
+}
+
+.stepz-bottom {
+  margin: 10px auto;
+  font-weight: bold;
+  background: gray;
+  padding: 5px 10px;
+  border-radius: 5px;
+  width: 100px;
+  text-align: center;
+  margin-left: 20rem;
+  transition: all 0.3s ease;
+}
+
+.stepz-bottom2 {
+  margin: 10px auto;
+  font-weight: bold;
+  background: gray;
+  padding: 5px 10px;
+  border-radius: 5px;
+  width: 100px;
+  text-align: center;
+  margin-top: -2.4rem;
+  margin-left: 33rem;
+}
+
+.slot.occupied {
+  background-color: #ff6b6b !important;
+  color: white;
+}
+
+.slot.free {
+  background-color: #51cf66 !important;
+  color: white;
+}
+
+/* Animation for route highlighting */
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+.road-vertical.active,
+.road-horizontal.active {
+  animation: pulse 2s infinite;
+}
+
+/* Route path indicator */
+.route-path {
+  position: absolute;
+  background: rgba(76, 175, 80, 0.3);
+  pointer-events: none;
+}
+
+/* Maintain same layout on mobile */
+@media (max-width: 600px) {
+  .parking-layout {
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+  }
+
+  .slot {
+    width: 40px;
+    height: 40px;
+  }
+
+  .road-vertical {
+    width: 15px;
+    height: 12rem;
+  }
+
+  .road-horizontal {
+    width: 90%;
+    font-size: 14px;
+  }
+
+  .stepz-bottom {
+    margin-left: 60px;
+  }
+  
+  .stepz-bottom2 {
+    margin-left: 200px;
+  }
+}
+
+/* Hover effects for interactive elements */
+.stepz-bottom:hover,
+.stepz-bottom2:hover {
+  transform: scale(1.05);
+  background: #555;
+}
+
+/* Additional status indicators */
+.slot.occupied:before {
+  content: '🚗';
+  font-size: 20px;
+  margin-right: 5px;
+}
+
+.slot.free:before {
+  content: '✓';
+  font-size: 20px;
+  margin-right: 5px;
+}
+
+/* Active route connection */
+.road-vertical.active::before,
+.road-horizontal.active::before {
+  content: '';
+  position: absolute;
+  background: rgba(76, 175, 80, 0.3);
+  z-index: -1;
+}
+
+.road-vertical.active::before {
+  width: 200%;
+  height: 100%;
+  left: -50%;
+}
+
+.road-horizontal.active::before {
+  width: 100%;
+  height: 200%;
+  top: -50%;
+}
