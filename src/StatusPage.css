@@ -1,0 +1,153 @@
+/* StatusPage.css */
+.status-page {
+    min-height: 100vh;
+    background-color: #1a1a1a;
+    color: white;
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .back-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px 0;
+  }
+  
+  .user-info {
+    font-size: 14px;
+    color: #ffffff;
+  }
+  
+  .logout-button {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .status-card {
+    background-color: #2a2a2a;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .card-header h2 {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .status-badge {
+    background-color: #2196F3;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+  }
+  
+  .parking-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #3a3a3a;
+  }
+  
+  .label {
+    color: #888;
+  }
+  
+  .value {
+    color: white;
+    font-weight: 500;
+  }
+  
+  .no-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+  }
+  
+  .no-data-text {
+    color: #888;
+    font-size: 16px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  
+    .user-info {
+      order: -1;
+    }
+  }
+
+  /* Add these to your existing StatusPage.css */
+.status-badge.active {
+    background-color: #4CAF50;
+  }
+  
+  .status-badge.completed {
+    background-color: #2196F3;
+  }
+  
+  .value.pending {
+    color: #FFC107;
+    font-style: italic;
+  }
+  
+  .detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .label {
+    color: #888;
+    font-size: 14px;
+  }
+  
+  .value {
+    color: white;
+    font-weight: 500;
+    font-size: 16px;
+  }
+  
+  .parking-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }

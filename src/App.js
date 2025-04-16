@@ -4,7 +4,9 @@ import ReactConfetti from 'react-confetti';
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { getDatabase, ref, onValue } from 'firebase/database';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Login from './Login';
+import StatusPage from './StatusPage';
 import './App.css';
 
 const firebaseConfig = {
@@ -19,63 +21,14 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const database = getDatabase(app);
+const auth = getAuth(app);
 
-function App() {
-  const [user, setUser] = useState(null);
-  const [userRfid, setUserRfid] = useState(null);
+function ParkingLayout({ user, userRfid, parkingData, handleLogout, ...props }) {
   const [bookedSlots, setBookedSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
-  const [parkingData, setParkingData] = useState({
-    slot1: { distance: 0 },
-    slot2: { distance: 0 },
-    slot3: { distance: 0 },
-    flame_detected: false
-  });
   const [showConfetti, setShowConfetti] = useState(false);
   const [lastPrice, setLastPrice] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        const userRfidMap = {
-          'gokul@gmail.com': 'c1e2ca83',
-          'shajith@gmail.com': '73328392'
-        };
-        setUserRfid(userRfidMap[currentUser.email]);
-      } else {
-        setUser(null);
-        setUserRfid(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const parkingRef = ref(database, 'parking'); // lowercase 'parking'
-    const unsubscribe = onValue(parkingRef, (snapshot) => {
-      const data = snapshot.val();
-      console.log('Firebase Data:', data); // For debugging
-      if (data) {
-        setParkingData(data);
-      }
-    });
-  
-    return () => unsubscribe();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      setSelectedSlot(null);
-      setBookedSlots([]);
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
-  };
 
   const handleSlotClick = (index) => {
     if (bookedSlots.includes(index)) return;
@@ -138,10 +91,6 @@ function App() {
     return classes;
   };
 
-  if (!user) {
-    return <Login />;
-  }
-
   return (
     <div className="app">
       {showConfetti && <ReactConfetti />}
@@ -149,22 +98,11 @@ function App() {
       <div className="user-header">
         <span>Welcome, {user.email}</span>
         <span>RFID: {userRfid}</span>
+        <Link to="/status" className="status-button">View Status</Link>
         <button onClick={handleLogout} className="logout-button">
           Logout
         </button>
       </div>
-
-      {lastPrice && (
-        <div className="last-transaction">
-          <div className="price-card">
-            <h3>Last Parking Fee</h3>
-            <div className="price-amount">₹{lastPrice}</div>
-            <button className="close-price" onClick={() => setLastPrice(null)}>
-              Close
-            </button>
-          </div>
-        </div>
-      )}
 
       <div className="parking-container">
         <h1 className="title">PARKING SYSTEM</h1>
@@ -226,17 +164,94 @@ function App() {
               </div>
             ))}
           </div>
-
-          {selectedSlot !== null && (
-            <>
-            </>
-          )}
         </div>
         
         <div className="stepz-bottom">ENTER</div>
         <div className="stepz-bottom2">EXIT</div>
       </div>
     </div>
+  );
+}
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [userRfid, setUserRfid] = useState(null);
+  const [parkingData, setParkingData] = useState({
+    slot1: { distance: 0 },
+    slot2: { distance: 0 },
+    slot3: { distance: 0 },
+    flame_detected: false
+  });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        const userRfidMap = {
+          'shajith@gmail.com': '73328392',
+          'gokul@gmail.com': 'c1e2ca83'
+        };
+        setUserRfid(userRfidMap[currentUser.email]);
+      } else {
+        setUser(null);
+        setUserRfid(null);
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const parkingRef = ref(database, 'parking');
+    const unsubscribe = onValue(parkingRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setParkingData(data);
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
+  if (!user) {
+    return <Login />;
+  }
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+        <Route 
+          path="/" 
+          element={
+            <ParkingLayout 
+              user={user}
+              userRfid={userRfid}
+              parkingData={parkingData}
+              handleLogout={handleLogout}
+            />
+          } 
+        />
+        <Route 
+          path="/status" 
+          element={
+            <StatusPage 
+              user={user}
+              userRfid={userRfid} // Make sure this is being set correctly
+              handleLogout={handleLogout}
+            />
+          } 
+        />
+      </Routes>
+    </Router>
   );
 }
 
