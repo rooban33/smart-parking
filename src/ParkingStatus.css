@@ -1,0 +1,148 @@
+/* components/ParkingStatus/ParkingStatus.css */
+.parking-status-container {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .status-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .status-header h2 {
+    color: #fff;
+    font-size: 1.8rem;
+    margin: 0;
+  }
+  
+  .status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  .status-badge.parked {
+    background: #4CAF50;
+    color: white;
+  }
+  
+  .status-badge.exited {
+    background: #ff4444;
+    color: white;
+  }
+  
+  .time-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .time-block {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.5rem;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .time-block i {
+    font-size: 2rem;
+    color: #4CAF50;
+  }
+  
+  .time-block.exit i {
+    color: #ff4444;
+  }
+  
+  .time-details h3 {
+    margin: 0;
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+  
+  .time-details p {
+    margin: 0.5rem 0 0;
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  .price-display {
+    animation: slideUp 0.5s ease-out;
+  }
+  
+  .price-card {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    color: white;
+  }
+  
+  .price-card h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+  
+  .price-amount {
+    margin: 1rem 0;
+    font-size: 3rem;
+    font-weight: 700;
+  }
+  
+  .currency {
+    font-size: 2rem;
+    margin-right: 0.5rem;
+  }
+  
+  .thank-you {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .parking-status-container {
+      padding: 1rem;
+    }
+  
+    .status-card {
+      padding: 1.5rem;
+    }
+  
+    .status-header h2 {
+      font-size: 1.5rem;
+    }
+  
+    .price-amount {
+      font-size: 2.5rem;
+    }
+  }
