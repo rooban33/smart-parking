@@ -1,5 +1,7 @@
 // App.js
 import React, { useState, useEffect } from 'react';
+import { set } from 'firebase/database';
+
 import ReactConfetti from 'react-confetti';
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
@@ -26,75 +28,79 @@ const auth = getAuth(app);
 
 function ParkingLayout({ user, userRfid, parkingData, handleLogout, ...props }) {
   const [bookedSlots, setBookedSlots] = useState([]);
+  
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [lastPrice, setLastPrice] = useState(null);
-
   const handleSlotClick = (index) => {
-    // Prevent clicking on already booked or occupied slots
-    if (bookedSlots.includes(index) || parkingData[`slot${index + 1}`]?.distance < 20) {
-      return; // Slot is not available for booking
+    // Check if this slot can be booked
+    if (bookedSlots.includes(index)) {
+      alert("This slot is already booked by you.");
+      return;
     }
-  
-    setSelectedSlot(index);
+    
+    // Check sensor data for special slots
+    const sensorSlotMap = { 1: 'slot1', 3: 'slot3', 13: 'slot13' };
+    const slotName = sensorSlotMap[index];
+    
+    // If the slot has a sensor, check if it's occupied
+    if (slotName && parkingData[slotName]?.distance === true) {
+      alert("This slot is already occupied.");
+      return;
+    }
+    
     const confirmBooking = window.confirm(`Do you want to book slot ${index}?`);
     if (confirmBooking) {
-      setBookedSlots([...bookedSlots, index]);
-      setShowConfetti(true); // Optional: Show confetti for booking confirmation
-    }
-  };
-  
-  const getSlotClass = (slot) => {
-    let classes = 'slot'; // Default slot class
-  
-    // Define the available slots (1, 3, and 13)
-    const availableSlots = [1, 3, 13];
-  
-    // If the slot is not in the available slots, mark it as booked and not available
-    if (!availableSlots.includes(slot)) {
-      classes += ' booked not-available'; // Red background for unavailable slots
-      return classes; // Return early for slots that cannot be booked
-    }
-  
-    // Check if slot is occupied using sensor data (for slots 1, 3, and 13)
-    const sensorSlotMap = {
-      1: 'slot1',
-      3: 'slot3',
-      13: 'slot13'
-    };
-  
-    let isOccupied = false;
-  
-    // Check sensor data for specific slots
-    if (sensorSlotMap.hasOwnProperty(slot)) {
-      const distance = parkingData[sensorSlotMap[slot]]?.distance;
-      if (distance < 20) {
-        isOccupied = true;
-        classes += ' occupied'; // Slot is occupied
-      } else {
-        classes += ' free'; // Slot is free
+      setSelectedSlot(index);
+      setBookedSlots((prev) => [...prev, index]);
+      setShowConfetti(true);
+      
+      // Update Firebase if the slot has a sensor
+      if (slotName) {
+        const slotRef = ref(database, `parking/${slotName}/distance`);
+        set(slotRef, true);
       }
+      
+      console.log("Booked slots:", [...bookedSlots, index]);
     }
-  
-    // Check if slot is already booked
-    if (bookedSlots.includes(slot)) {
-      classes += ' booked'; // Slot is booked
-      isOccupied = true; // Prevent further booking for this slot
-    }
-  
-    // Mark selected slot
-    if (slot === selectedSlot) {
-      classes += ' selected'; // Slot is selected
-    }
-  
-    // If the slot is occupied or already booked, prevent booking
-    if (isOccupied) {
-      classes += ' not-available'; // Red background for unavailable slots
-    }
-  
-    return classes;
   };
-  
+  const getSlotClass = (slot) => {
+    let classes = 'slot';
+    
+    // First, check if the slot is booked by the user
+    if (bookedSlots.includes(slot)) {
+      classes += ' booked not-available';
+      if (slot === selectedSlot) {
+        classes += ' selected';
+      }
+      return classes;
+    }
+    
+    // Special handling for slots with sensors
+    const sensorSlotMap = { 1: 'slot1', 3: 'slot3', 13: 'slot13' };
+    const slotName = sensorSlotMap[slot];
+    
+    if (slotName) {
+      // This is a slot with a sensor
+      const distance = parkingData[slotName]?.distance;
+      
+      if (distance === true ) {
+        classes += ' occupied not-available';
+      } else {
+        classes += ' free';
+      }
+    } else {
+      // This is a slot without a sensor - make it available for booking
+      classes += '  occupied not-available';
+    }
+    
+    // Highlight if currently selected
+    if (slot === selectedSlot) {
+      classes += ' selected';
+    }
+    
+    return classes;
+  };  
   // const getSlotClass = (slot) => {
   //   let classes = 'slot';
     
