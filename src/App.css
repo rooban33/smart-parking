@@ -87,13 +87,27 @@ body {
 .slot.booked {
   background: red;
   color: white;
-  pointer-events: none;
+  pointer-events: none; /* Prevent interaction with booked slots */
+}
+
+.slot.not-available {
+  background-color: red; /* Red for unavailable slots */
+  cursor: not-allowed;   /* Disable interaction */
 }
 
 .slot.selected {
   border: 3px solid #4CAF50;
   box-shadow: 0 0 15px #4CAF50;
   transform: scale(1.1);
+}
+
+.slot.free {
+  background-color: green; /* Available slot */
+}
+
+.slot.occupied {
+  background-color: rgb(225, 6, 20); /* Slot occupied but not booked */
+  cursor: not-allowed;
 }
 
 .road-vertical {
