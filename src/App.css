@@ -252,7 +252,7 @@ body {
 }
 
 .slot.occupied {
-  background-color: #ff6b6b !important;
+  background-color: red !important;
   color: white;
 }
 
