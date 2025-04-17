@@ -84,7 +84,7 @@ function ParkingLayout({ user, userRfid, parkingData, handleLogout, ...props }) 
       // This is a slot with a sensor
       const distance = parkingData[slotName]?.distance;
       
-    if (distance <=25 ) {
+    if (distance <=5 ) {
         classes += ' occupied not-available';
       } else {
         classes += ' free';
